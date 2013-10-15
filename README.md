@@ -1,6 +1,6 @@
 #Twisted 13.1.0
 
-Fork of twisted netwoking engine
+Fork of twisted networking engine
 
 http://twistedmatrix.com
 
