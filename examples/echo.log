@@ -1,0 +1,9 @@
+2013-10-22 14:20:14+0530 [-] Log opened.
+2013-10-22 14:20:14+0530 [-] EchoFactory starting on 8000
+2013-10-22 14:20:14+0530 [-] Starting factory <__main__.EchoFactory instance at 0x104b1bf38>
+2013-10-22 14:20:17+0530 [Echo,0,127.0.0.1] recieved data Hello, world! at t=1382431817.13
+2013-10-22 14:20:17+0530 [Echo,0,127.0.0.1] sent data  Hello, world! at t=1382431817.13
+2013-10-22 14:20:20+0530 [-] Received SIGINT, shutting down.
+2013-10-22 14:20:20+0530 [__main__.EchoFactory] (TCP Port 8000 Closed)
+2013-10-22 14:20:20+0530 [__main__.EchoFactory] Stopping factory <__main__.EchoFactory instance at 0x104b1bf38>
+2013-10-22 14:20:20+0530 [-] Main loop terminated.
