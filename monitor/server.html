@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Reactor monitor</title>
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript">
+        function init() {
+            initstate = true;
+            globdat = undefined;
+            timeout = 1000;
+            start();
+        }
+        function start() {
+            getdata();
+            setTimeout(start, timeout);
+        }
+        function getdata() {
+            $.ajax({
+                type : 'get',
+                url : 'test.txt',
+                success : function(data){
+                    update(data);
+                }
+            });
+        }
+        function update(data) {
+            if (globdat === undefined)
+                globdat = data;
+            if (data === globdat && !initstate) {
+                if (timeout < 30000)
+                    timeout *= 1.5;
+            }
+            else {
+                timeout = 1000;
+                initstate = false;
+                globdat = data;
+                darr = data.split('\n').reverse();
+                var data = darr.join('\n');
+                $('#mdat').html(data);
+            }
+        }
+        </script>
+    </head>
+    <body onload="init()">
+        <pre id="mdat"></pre>
+    </body>
+</html>
