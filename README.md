@@ -13,12 +13,15 @@ The reactor runs lots of events; connectionMade, dataReceived, connectionLost, t
 ##Usage :
 
 clone the repo
+
 	git clone https://github.com/srinidhij/twisted-reactor-metrics && cd twisted-reactor-metrics
 
 Run simple web server
+
 	python examples/server.py '/home/username'
 
 Then goto  
+	
 	http://localhost:8888
 
 to see the monitor info	
