@@ -5,6 +5,7 @@
         <script type="text/javascript" src="jquery.min.js"></script>
         <script type="text/javascript">
         function init() {
+            getdata();
             initstate = true;
             globdat = undefined;
             timeout = 1000;
@@ -24,24 +25,46 @@
             });
         }
         function update(data) {
-            if (globdat === undefined)
+            if (globdat === undefined) {
                 globdat = data;
-            if (data === globdat && !initstate) {
+            }
+
+            else if (data === globdat && !initstate) {
                 if (timeout < 30000)
                     timeout *= 1.5;
             }
+
             else {
                 timeout = 1000;
                 initstate = false;
+                var dat;
+                var temp = globdat.split('\n');
+                dat = data.split('\n');
+                var diff = dat.length - temp.length;
+                //$('#ma').html(dat.length + ' - ' + temp.length); 
+                dat = dat.reverse();
+                st = '<pre class="new">'+dat.slice(0,diff).join('\n')+'</pre>';
+                st += '<pre class="old">'+dat.slice(diff,dat.length-1).join('\n')+'</pre>';
+                $('#mdat').html(st);
                 globdat = data;
-                darr = data.split('\n').reverse();
-                var data = darr.join('\n');
-                $('#mdat').html(data);
             }
         }
         </script>
+        <style type="text/css">
+        .old {
+            font-family: sans-serif;
+            line-height: 1.2em;            
+            color: rgba(31, 139, 58, 0.9);
+        }
+        .new {
+            font-family: sans-serif;
+            line-height: 1.2em;
+            color: rgba(178, 44, 49, 0.9);
+        }
+        </style>
     </head>
     <body onload="init()">
-        <pre id="mdat"></pre>
+        <h1 id="ma">Info from monitor</h1>
+        <div id="mdat"></div>
     </body>
 </html>
