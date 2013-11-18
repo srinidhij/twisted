@@ -14,7 +14,9 @@ The reactor runs lots of events; connectionMade, dataReceived, connectionLost, t
 
 clone the repo
 
-	git clone https://github.com/srinidhij/twisted-reactor-metrics && cd twisted-reactor-metrics
+	git clone https://github.com/srinidhij/twisted-reactor-metrics
+
+	cd twisted-reactor-metrics
 
 Run simple web server
 
