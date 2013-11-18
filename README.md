@@ -10,3 +10,15 @@ I am building a reporting protocol which would report timings and potentially ot
 
 The reactor runs lots of events; connectionMade, dataReceived, connectionLost, timed calls, and queued calls from callFromThread. But currently there’sno tools to discover how long those events took, or what resources they consumed, so when one event makes your reactor gets “stuck” you might not know which one it is without some manual instrumentation.
 
+##Usage :
+
+clone the repo
+	git clone https://github.com/srinidhij/twisted-reactor-metrics && cd twisted-reactor-metrics
+
+Run simple web server
+	python examples/server.py '/home/username'
+
+Then goto  
+	http://localhost:8888
+
+to see the monitor info	
