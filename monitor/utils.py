@@ -7,7 +7,7 @@ levels = ['info', 'critical', 'warning']
 def genrandstr():
     l = randint(5,20)
     return { 'event': choice(events),
-    'info' : ''.join([choice(string.ascii_lowercase) for i in xrange(l)]), 
+    'msg' : ''.join([choice(string.ascii_lowercase) for i in xrange(l)]), 
     'level' : choice(levels)
     }
 
