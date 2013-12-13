@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import sys
 import select
 import time
 import socket
-from platform import platform
+from twisted.python.runtime import platform
 
 class EPollNotImplemented(Exception):
     ''' Exception class for epoll not being supported 
