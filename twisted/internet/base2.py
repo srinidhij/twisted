@@ -863,7 +863,7 @@ class ReactorBase(object):
 
         mdata = {
             'event':'timeout' ,
-            'msg' : 'Reactor sleeping for : %s s'%(round(tm, 4)) ,
+            'msg' : 'Reactor sleeping for : %ss (waiting for I/O notification) '%(round(tm, 4)) ,
             'level' : 'info'
         }
 
@@ -1120,6 +1120,13 @@ class BaseConnector:
             self.stopConnecting()
         elif self.state == 'connected':
             self.transport.loseConnection()
+        mdata = {
+            'event':'disconnect' ,
+            'msg' : 'disconnect regardless of state' ,
+            'level' : 'critical'
+        }
+
+        sender.send(str(mdata) , MONITOR_ADDR) 
 
     def connect(self):
         """Start connection to remote server."""
@@ -1127,6 +1134,7 @@ class BaseConnector:
             raise RuntimeError("can't connect in this state")
 
         self.state = "connecting"
+
         if not self.factoryStarted:
             self.factory.doStart()
             self.factoryStarted = 1
@@ -1134,6 +1142,15 @@ class BaseConnector:
         if self.timeout is not None:
             self.timeoutID = self.reactor.callLater(self.timeout, transport.failIfNotConnected, error.TimeoutError())
         self.factory.startedConnecting(self)
+
+        mdata = {
+            'event':'connect' ,
+            'msg' : 'connecting' ,
+            'level' : 'info'
+        }
+
+        sender.send(str(mdata) , MONITOR_ADDR) 
+
 
     def stopConnecting(self):
         """Stop attempting to connect."""
@@ -1144,7 +1161,24 @@ class BaseConnector:
         self.transport.failIfNotConnected(error.UserError())
         del self.transport
 
+        mdata = {
+            'event':'stopConnecting' ,
+            'msg' : 'Stop attempting to connect' ,
+            'level' : 'warning'
+        }
+
+        sender.send(str(mdata) , MONITOR_ADDR) 
+
+
     def cancelTimeout(self):
+        mdata = {
+            'event':'cancelTimeout' ,
+            'msg' : 'cancel the timeout' ,
+            'level' : 'info'
+        }
+
+        sender.send(str(mdata) , MONITOR_ADDR) 
+
         if self.timeoutID is not None:
             try:
                 self.timeoutID.cancel()
@@ -1166,6 +1200,14 @@ class BaseConnector:
             # factory hasn't called our connect() method
             self.factory.doStop()
             self.factoryStarted = 0
+        mdata = {
+            'event':'connectionFailed' ,
+            'msg' : 'Failed to connect for reason %s'%(str(reason)) ,
+            'level' : 'warning'
+        }
+
+        sender.send(str(mdata) , MONITOR_ADDR) 
+
 
     def connectionLost(self, reason):
         self.state = "disconnected"
@@ -1174,6 +1216,14 @@ class BaseConnector:
             # factory hasn't called our connect() method
             self.factory.doStop()
             self.factoryStarted = 0
+        mdata = {
+            'event':'connectionLost' ,
+            'msg' : 'connection lost for reason %s'%(str(reason)) ,
+            'level' : 'info'
+        }
+
+        sender.send(str(mdata) , MONITOR_ADDR) 
+
 
     def getDestination(self):
         raise NotImplementedError(
