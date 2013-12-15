@@ -339,6 +339,14 @@ class PosixReactorBase(_SignalReactorMixin, _DisconnectSelectableMixin,
     def spawnProcess(self, processProtocol, executable, args=(),
                      env={}, path=None,
                      uid=None, gid=None, usePTY=0, childFDs=None):
+
+        mdata = {
+            'event' : 'spawnProcess',
+            'msg' : 'spawing a process with executable: %s'%(executable) ,
+            'level' : 'info'
+        }
+        sender.send(str(mdata, MONITOR_ADDR))
+
         args, env = self._checkProcessArgs(args, env)
         if platformType == 'posix':
             if usePTY:
@@ -376,6 +384,13 @@ class PosixReactorBase(_SignalReactorMixin, _DisconnectSelectableMixin,
 
         @returns: object conforming to L{IListeningPort}.
         """
+        mdata = {
+            'event' : 'listenUDP',
+            'msg' : 'listening for udp on port : %s'%(port) ,
+            'level' : 'info'
+        }
+        sender.send(str(mdata, MONITOR_ADDR))
+
         p = udp.Port(port, protocol, interface, maxPacketSize, self)
         p.startListening()
         return p
@@ -624,11 +639,25 @@ class _PollLikeMixin(object):
                         # Handle a read event.
                         why = selectable.doRead()
                         inRead = True
+                        mdata = {
+                            'event' : '_doReadOrWrite',
+                            'msg' : 'reading with event : %s'%(event) ,
+                            'level' : 'info'
+                        }
+                        sender.send(str(mdata, MONITOR_ADDR))
+
                     if not why and event & self._POLL_OUT:
                         # Handle a write event, as long as doRead didn't
                         # disconnect us.
                         why = selectable.doWrite()
                         inRead = False
+                        mdata = {
+                            'event' : '_doReadOrWrite',
+                            'msg' : 'writing with event : %s'%(event) ,
+                            'level' : 'info'
+                        }
+                        sender.send(str(mdata, MONITOR_ADDR))
+
             except:
                 # Any exception from application code gets logged and will
                 # cause us to disconnect the selectable.
