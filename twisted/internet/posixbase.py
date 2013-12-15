@@ -26,13 +26,19 @@ from twisted.internet import error, udp, tcp
 from twisted.python import log, failure, util
 from twisted.python.runtime import platformType, platform
 
-from twisted.internet.base import ReactorBase, _SignalReactorMixin
+from twisted.internet.base2 import ReactorBase, _SignalReactorMixin
 from twisted.internet.main import CONNECTION_DONE, CONNECTION_LOST
+
+#for monitor
+from twisted.monitor import sender
 
 # Exceptions that doSelect might return frequently
 _NO_FILENO = error.ConnectionFdescWentAway('Handler has no fileno method')
 _NO_FILEDESC = error.ConnectionFdescWentAway('File descriptor lost')
 
+# FIXME : hardcoded monitor address
+MONITOR_ADDR = ('localhost', 8888)
+print 'monitor is '+ str(MONITOR_ADDR)
 
 try:
     from twisted.protocols import tls
@@ -478,11 +484,29 @@ class PosixReactorBase(_SignalReactorMixin, _DisconnectSelectableMixin,
     # IReactorTCP
 
     def listenTCP(self, port, factory, backlog=50, interface=''):
+        
+        #send info to monitor
+        mdata = {'msg':'Running event listenTCP on port %s with backlog %s'%(port, backlog), 
+            'event':'listenTCP', 
+            'level':'info'
+            }
+        sender.send(str(mdata), MONITOR_ADDR)
+        print 'listenTCP'
+
         p = tcp.Port(port, factory, backlog, interface, self)
         p.startListening()
         return p
 
     def connectTCP(self, host, port, factory, timeout=30, bindAddress=None):
+
+        #send info to monitor
+        mdata = {'msg':'Event connectTCP occured with host:port %s:%s'%(host, port), 
+            'event':'connectTCP', 
+            'level':'info'
+            }
+        sender.send(str(mdata), MONITOR_ADDR)
+        print 'connectTCP'        
+
         c = tcp.Connector(host, port, factory, timeout, bindAddress, self)
         c.connect()
         return c
