@@ -4,6 +4,7 @@ import sys
 import select
 import time
 import socket
+import simplejson as json
 from twisted.python.runtime import platform
 
 class EPollNotImplemented(Exception):
@@ -151,37 +152,43 @@ def recieve():
     return reciever.recieve()
 
 def run():
-    datacache = []
-    print 'Monitor running on '+str(addr)
+    try:
+        start = ' Monitor started at %s'%(time.ctime())
+        md = []
+        while  True:
+            data = recieve()
+            if data is not None:
+                dat = {'time': time.ctime() , 'data' : data}
+                md.append(dat)
+    
+    except KeyboardInterrupt:
+        stop = 'Monitor stoping at %s'%(time.ctime())
+        f = {'start':start, 'data' : md, 'stop':stop}
+        with open("monitor.txt", "a") as mfile:
+            mfile.write(json.dumps(f))
 
-    while True:
-        data = recieve()
-        if data is not None:
-            print data
-            dat = time.ctime() + '::' +data + '\n'
-            with open("test.txt", "a") as mfile:
-                mfile.write(dat)
+        
+    except Exception as e:
+        raise
 
 def tests():
-    i = 0
-    while  True:
-        '''
-        print 'before'
-        data = recieve()
-        print data
-        if data is not None :
-            pass
-            #break
-        '''
-        data = recieve()
-        if data is not None:
-            dat = time.ctime() + '::' +data + '\n'
-            with open("monitor.txt", "a") as mfile:
-                mfile.write(dat)
-        '''
-        print 'after , i=',i
-        i += 1
-        '''
+    try:
+        mstartinfo = 'Monitor started at %s'%(time.ctime())
+
+        while  True:
+            data = recieve()
+            if data is not None:
+                dat = time.ctime() + '::' +data + '\n'
+                with open("monitor.txt", "a") as mfile:
+                    mfile.write(dat)
+                    print dat
+    
+    except KeyboardInterrupt:
+        mendinfo = 'Monitor stoping at %s'%(time.ctime())
+    except Exception as e:
+        pass 
+
+
 if __name__ == '__main__':
     run()
     #tests()
