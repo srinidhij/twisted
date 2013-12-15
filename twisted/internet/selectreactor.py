@@ -18,7 +18,9 @@ from twisted.internet.interfaces import IReactorFDSet
 from twisted.internet import posixbase
 from twisted.python import log
 from twisted.python.runtime import platformType
+from twisted.monitor import sender
 
+MONITOR_ADDR = ('localhost', 8888)
 
 def win32select(r, w, e, timeout=None):
     """Win32 select wrapper."""
@@ -147,6 +149,7 @@ class SelectReactor(posixbase.PosixReactorBase, _extraBase):
     doIteration = doSelect
 
     def _doReadOrWrite(self, selectable, method, dict):
+        
         try:
             why = getattr(selectable, method)()
         except:
@@ -154,6 +157,14 @@ class SelectReactor(posixbase.PosixReactorBase, _extraBase):
             log.err()
         if why:
             self._disconnectSelectable(selectable, why, method=="doRead")
+
+        mdata = {
+            'event' : '_doReadOrWrite',
+            'msg' : 'of type: %s with method %s'%(method, getattr(selectable, method)) ,
+            'level' : 'info'
+        }
+        sender.send(str(mdata), MONITOR_ADDR)
+
 
     def addReader(self, reader):
         """
