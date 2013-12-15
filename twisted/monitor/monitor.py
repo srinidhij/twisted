@@ -150,6 +150,18 @@ reciever = getreciever(addr)
 def recieve():
     return reciever.recieve()
 
+def run():
+    datacache = []
+    print 'Monitor running on '+str(addr)
+
+    while True:
+        data = recieve()
+        if data is not None:
+            print data
+            dat = time.ctime() + '::' +data + '\n'
+            with open("test.txt", "a") as mfile:
+                mfile.write(dat)
+
 def tests():
     i = 0
     while  True:
@@ -164,11 +176,12 @@ def tests():
         data = recieve()
         if data is not None:
             dat = time.ctime() + '::' +data + '\n'
-            with open("test.txt", "a") as mfile:
+            with open("monitor.txt", "a") as mfile:
                 mfile.write(dat)
         '''
         print 'after , i=',i
         i += 1
         '''
 if __name__ == '__main__':
-    tests()
+    run()
+    #tests()
